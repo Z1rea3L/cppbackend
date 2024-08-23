@@ -1,8 +1,5 @@
 #include "json_loader.h"
 #include "tagged.h"
-// #include "boost_json.cpp"
-// #include "boost_json.h"
-
 
 #include <boost/json/src.hpp>
 
@@ -60,9 +57,6 @@ void AddOffices(model::Map& map, boost::json::array& offices){
 }
 
 model::Game LoadGame(const std::filesystem::path& json_path) {
-    // Загрузить содержимое файла json_path, например, в виде строки
-    // Распарсить строку как JSON, используя boost::json::parse
-    // Загрузить модель игры из файла
     using IdMap = util::Tagged<std::string, model::Map>;
 
     model::Game game;

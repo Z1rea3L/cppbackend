@@ -3,8 +3,6 @@
 
 namespace http_handler {
     
-
-// Создаёт StringResponse с заданными параметрами
 StringResponse MakeStringResponse(http::status status, std::string_view body, unsigned http_version,
                                 bool keep_alive, http::verb method,
                                 std::string_view content_type /*= ContentType::TEXT_HTML*/ ) { 
@@ -47,15 +45,15 @@ StringResponse RequestHandler::HandleRequest(StringRequest&& req) {
     
     auto target = req.target();
     std::string query(target.substr(1).data(), target.size()-1);
-    // Разбираем запрос по словам
+
     auto query_words = SplitQueryLine(query, '/');  
     query_words.resize(10);
 
     if (query_words[0] == "api"s){
         if (query_words[1] == "v1"s && query_words[2] == "maps"s){
-            if (query_words[3].empty()){ // Если запрос  - список карт
+            if (query_words[3].empty()){ 
                 body = json_loader::GetMapsJson(game_.GetMaps());
-            } else { // Если запрос  - описание карты
+            } else {
                 std::string map_id = std::string(query_words[3]);
                 auto map = game_.FindMap(model::Map::Id{map_id});
                 if (map){
@@ -65,13 +63,12 @@ StringResponse RequestHandler::HandleRequest(StringRequest&& req) {
                     return text_response(http::status::not_found, body);
                 }
             }
-        } else { // если не удается обработать запрос
+        } else {
             body = json_loader::GetErrorMes("badRequest", "Bad request");
             return text_response(http::status::bad_request, body);
         }
 
     }  
-    // body = "<strong>Hello, "+str+"</strong>";
     return text_response(http::status::ok, body);
 }    
 
