@@ -13,7 +13,7 @@ RUN apt update && \
 # Скопировать файлы проекта внутрь контейнера
 COPY ./src /app/src
 COPY CMakeLists.txt conanfile.txt /app/
-
+ 
 RUN conan profile new default --detect && \
     mkdir /app/build && cd /app/build && \
     conan install .. --build=missing -s compiler.libcxx=libstdc++11 -s build_type=Release && \
