@@ -2,11 +2,11 @@
 
 #include "logger.h"
 
-#include <boost/date_time.hpp>                              // BOOST_LOG_ATTRIBUTE_KEYWORD
-#include <boost/log/trivial.hpp>                            // для BOOST_LOG_TRIVIAL
-#include <boost/log/utility/setup/console.hpp>              // для вывода в консоль
-#include <boost/log/utility/setup/file.hpp>                 // для вывода в файл
-#include <boost/log/utility/manipulators/add_value.hpp>     // logging::add_value
+#include <boost/date_time.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 
 namespace json     = boost::json;
 namespace keywords = boost::log::keywords;
@@ -16,31 +16,19 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(timestamp,  "TimeStamp", boost::posix_time::ptime)
 BOOST_LOG_ATTRIBUTE_KEYWORD(extra_data, "ExtraData", json::object)
 
 void GameLogFormatter(logging::record_view const& rec, logging::formatting_ostream& strm) {
-    // Выодим временную метку
     auto ts = *rec[timestamp];
     strm << "{\"timestamp\":\"" << to_iso_extended_string(ts) << "\",";
-    // Выводим дополнительные данные.
+
     strm << "\"data\":" << rec[extra_data] << ",";
-    // Выводим само сообщение.
+
     strm << "\"message\":\"" << rec[logging::expressions::smessage] << "\"}";
 }
-//// Logs ///////////////////////////////
-
 
 namespace logger {
 
 using namespace std::literals;
 
 void LogInit() {
-/*
-    logging::add_file_log(
-        keywords::file_name  = "game_server.log", 
-        keywords::format     = &GameLogFormatter,
-        keywords::open_mode  = std::ios_base::app | std::ios_base::out,
-        keywords::auto_flush = true
-    );  
-*/
-    //
     logging::add_console_log( 
         std::cout,
         keywords::format     = &GameLogFormatter,
