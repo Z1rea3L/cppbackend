@@ -2,12 +2,6 @@
 
 namespace app {
 
-//// Player ///////////////////////////////////////////////////////////////////////////////////////
-
-
-//// Application //////////////////////////////////////////////////////////////////////////////////
-
-// фасад для api_handler
 bool Application::GetMap(const std::string& map_id, std::string& res_body) {
     const model::Map* map = game_.FindMap(model::Map::Id(map_id));
     if ( map == nullptr ) {
@@ -30,22 +24,20 @@ bool Application::GetMaps(std::string& res_body) {
 }
 
 bool Application::TryJoin(const std::string& user_name, const std::string& map_id, std::string& res_body) {
-    // check map_id
+
     model::Map::Id id(map_id);
     const model::Map* map = game_.FindMap(id);
     if ( map == nullptr ) {
         return false;
     }
 
-    // get or create GameSession
     model::GameSession* session = game_.FindSession(id);
     if ( session == nullptr ) {
         session = game_.AddSession(map);
     }
 
-    // create dog
     model::Dog* dog = session->AddDog(user_name, DOG_ID++);
-    // set dog initial position in random spawn model
+
     if ( randomize_spawn_ ) {
         auto roads         = map->GetRoads();
         int random_road    = GetRandom(0, roads.size() - 1);
@@ -60,10 +52,9 @@ bool Application::TryJoin(const std::string& user_name, const std::string& map_i
             random_pos.x = GetRandom(std::min(start.x, end.x), std::max(start.x, end.x));
         }
         dog->SetPosition(random_pos);
-//std::cout << "On random road " << random_road << " random initial position = " << random_pos.ToString() << std::endl;
+
     }
 
-    // create player
     std::string token = players_.Add(dog, session);
     Player* player = players_.FindByToken(token);
     if ( player == nullptr ) {
@@ -71,7 +62,6 @@ bool Application::TryJoin(const std::string& user_name, const std::string& map_i
         throw std::runtime_error(err);
     }
 
-    // make response
     json::object result;
     result["authToken"] = token;
     result["playerId"]  = player->GetDog()->GetId();
@@ -80,11 +70,10 @@ bool Application::TryJoin(const std::string& user_name, const std::string& map_i
 }
 
 bool Application::GetPlayers(const std::string& token, std::string& res_body) {
-    // check game has this token
     if ( !players_.HasToken(token) ) {
         return false;
     }
-    // get players_list
+
     auto players = players_.GetPlayers();
     json::object obj;
     for (auto& player : players) {
@@ -97,11 +86,10 @@ bool Application::GetPlayers(const std::string& token, std::string& res_body) {
 }
 
 bool Application::GetState(const std::string& token, std::string& res_body) {
-    // check game has this token
     if ( !players_.HasToken(token) ) {
         return false;
     }
-    // get state
+
     auto players = players_.GetPlayers();
     json::object obj;
     for (auto& player : players) {
@@ -125,21 +113,20 @@ bool Application::GetState(const std::string& token, std::string& res_body) {
 }
 
 bool Application::Move(const std::string& token, const std::string& move, std::string& res_body) {
-    // try get player
     Player* player = players_.FindByToken(token);
     if ( player == nullptr ) {
         return false;
     }
-    // get map speed
+
     double speed = player->GetSession()->GetMap()->GetDogSpeed();
-    // set dog speed
+
     player->GetDog()->SetSpeed(speed, move);
     res_body = "{}";
     return true;
 }
 
 std::string Application::Tick(uint32_t time_delta) {
-//std::cout << "Tack !!" << std::endl;
+
     game_.Tick(time_delta);
     return "{}"s;
 }

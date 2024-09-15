@@ -12,7 +12,6 @@
 
 namespace json_loader {
 
-//// game ///////////
 model::Game LoadGame(const std::filesystem::path& config_file);
 
 }  // namespace json_loader
