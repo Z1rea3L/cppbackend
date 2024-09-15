@@ -9,6 +9,7 @@ using namespace std::literals;
 namespace json = boost::json;
 namespace fs   = std::filesystem;
 
+///////////////////////////////////////////
 std::string ReadFile(const fs::path& path) {
     std::ifstream f(path, std::ios::in | std::ios::binary);
     if ( !f ) {
@@ -23,19 +24,19 @@ std::string ReadFile(const fs::path& path) {
 
 model::Game LoadGame(const fs::path& config_file) {
     constexpr const double DEFAULT_DOG_SPEED = 1.0;
-
+    //
     model::Game game;
-
+    // read & parse
     json::object config = json::parse(ReadFile(config_file)).as_object();
-
+    // try get defaultDogSpeed
     double default_dog_speed = DEFAULT_DOG_SPEED;
     try {
         default_dog_speed = config.at("defaultDogSpeed").as_double();
     } catch (...) { }
-
+    // try get maps
     try {
         for (auto& json_map : config.at("maps").as_array()) {
-
+            // map
             std::string id   = json::value_to< std::string >(json_map.as_object().at("id"));
             std::string name = json::value_to< std::string >(json_map.as_object().at("name"));
             double dog_speed = default_dog_speed;
@@ -43,7 +44,7 @@ model::Game LoadGame(const fs::path& config_file) {
                 dog_speed = json_map.at("dogSpeed").as_double();
             } catch (...) { }
             model::Map map{model::Map::Id(id), name, dog_speed};
-
+            // roads
             json::array roads = json_map.as_object().at("roads").as_array();
             for (const auto& road : roads) {
                 int x0 = json::value_to< int >(road.as_object().at("x0"));
@@ -59,7 +60,7 @@ model::Game LoadGame(const fs::path& config_file) {
                     map.AddRoad(road);
                 } catch (...) { }
             }
-
+            // buildings
             json::array buildings = json_map.as_object().at("buildings").as_array();
             for (const auto& building : buildings) {
                 int x = json::value_to< int >(building.as_object().at("x"));
@@ -69,7 +70,7 @@ model::Game LoadGame(const fs::path& config_file) {
                 model::Building build(model::Rectangle({x, y}, {w, h}));
                 map.AddBuilding(build);
             }
-
+            // offices
             json::array offices = json_map.as_object().at("offices").as_array();
             for (const auto& office : offices) {
                 std::string id = json::value_to< std::string >(office.as_object().at("id"));

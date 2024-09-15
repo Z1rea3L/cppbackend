@@ -13,6 +13,7 @@
 
 namespace model {
 
+//// Model's Aux ///////////////////////////////////////////////////////////////////
 using Dimension = int;
 using Coord     = Dimension;
 
@@ -38,13 +39,16 @@ struct Offset {
     Dimension dx, dy;
 };
 
+
+
+//// Road //////////////////////////////////////////////////////////////////////////
 class Road {
     struct HorizontalTag {
-        HorizontalTag() = default;
+        explicit HorizontalTag() = default;
     };
 
     struct VerticalTag {
-        VerticalTag() = default;
+        explicit VerticalTag() = default;
     };
 
 public:
@@ -82,6 +86,9 @@ private:
     Point end_;
 };
 
+
+
+//// Building //////////////////////////////////////////////////////////////////////
 class Building {
 public:
     explicit Building(Rectangle bounds) noexcept
@@ -96,6 +103,9 @@ private:
     Rectangle bounds_;
 };
 
+
+
+//// Office ////////////////////////////////////////////////////////////////////////
 class Office {
 public:
     using Id = util::Tagged<std::string, Office>;
@@ -124,6 +134,9 @@ private:
     Offset offset_;
 };
 
+
+
+//// Map ///////////////////////////////////////////////////////////////////////////
 class Map {
 public:
     using Id        = util::Tagged<std::string, Map>;
@@ -187,11 +200,14 @@ private:
     double dog_speed_;
 };
 
+
+
+//// Dog ///////////////////////////////////////////////////////////////////////////
 enum Direction {
-    NORTH,
-    SOUTH,
-    WEST,
-    EAST
+    NORTH,          // U
+    SOUTH,          // D
+    WEST,           // L
+    EAST            // R
 };
 
 std::string DirToStr(Direction dir);
@@ -259,22 +275,26 @@ private:
 private:
     std::string name_;
     uint32_t    id_;
+    //
     Position    pos_{0, 0};
     Speed       speed_{0, 0};
     Direction   dir_{NORTH};
 };
 
+
+
+//// GameSession ///////////////////////////////////////////////////////////////////
 class GameSession {
 public:
     explicit GameSession(const Map* map) : map_(map) { }
     Dog* AddDog(std::string name, uint32_t id) { 
         dogs_.emplace_back(name, id);
-        return &dogs_.back();
+        return &dogs_.back();//at(dogs_.size() - 1);
     }
-
+    //
     const Map* GetMap() const { return map_; }
     const std::list<Dog>& GetDogs() const { return dogs_; }
-
+    //
     void Tick(uint32_t time_delta);
 
 private:
@@ -282,6 +302,10 @@ private:
     std::list<Dog> dogs_;
 };
 
+
+
+
+//// Game //////////////////////////////////////////////////////////////////////////
 class Game {
 public:
     using Maps     = std::vector<Map>;
@@ -300,6 +324,7 @@ public:
         return nullptr;
     }
 
+    //
     GameSession* AddSession(const Map* map);
 
     const Sessions& GetSessions() const noexcept {
@@ -322,10 +347,10 @@ public:
 private:
     using MapIdHasher = util::TaggedHasher<Map::Id>;
     using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;
-
+    //
     Maps         maps_;
     MapIdToIndex map_id_to_index_;
-
+    //
     Sessions     sessions_;
     MapIdToIndex map_id_to_session_;
 

@@ -25,16 +25,16 @@ public:
         unsigned    http_version = req.version();
         bool        keep_alive   = req.keep_alive();
         std::string target(req.target());
-
+        //
         StringResponse response;
-        if ( api_.CanAccept(target) ) {
-            response = api_.Response(req);
-        } else {
+        if ( api_.CanAccept(target) ) { // request to API /////////////////////////////////
+            response = api_.Response(req);  // without strand
+        } else {                        // get static content /////////////////////////////
             std::string wanted_file = root_.string() + target;
             if ( target == "/" ) {
                 wanted_file += "index.html";
             }
-
+            //
             if ( !IsSubPath(wanted_file) ) {
                 response = Response::BadRequest(http_version, keep_alive);
             } else if ( !std::filesystem::exists(wanted_file) ) {
@@ -52,16 +52,19 @@ public:
                 }
 
                 response.body() = std::move(file);
-
+                // Метод prepare_payload заполняет заголовки Content-Length и Transfer-Encoding
+                // в зависимости от свойств тела сообщения
                 response.prepare_payload();
                 send(response);
                 return;
             }
         }
+        //
         send(response);
     }
 
 private:
+    ////
     StringResponse HandleApiRequest(const StringRequest& req) {
         StringResponse response(http::status::ok, 11);
         return response;
@@ -71,8 +74,11 @@ private:
         StringResponse response(http::status::ok, 11);
         return response;
     }
+    ////
 
+    // Возвращает true, если каталог path содержится внутри base.
     bool IsSubPath(fs::path path) {
+        // Проверяем, что все компоненты base содержатся внутри path
         for (auto b = root_.begin(), p = path.begin(); b != root_.end(); ++b, ++p) {
             if (p == path.end() || *p != *b) {
                 return false;
@@ -104,14 +110,14 @@ private:
         if ( ext == ".tif" || ext == ".tiff" ) return "image/tiff";
         if ( ext == ".svg" || ext == ".svgz" ) return "image/svg+xml";
         if ( ext == ".mp3" )  return "audio/mpeg";
-
+        //
         return "application/octet-stream";
     }
 
     void DumpRequest(const StringRequest& req) {
         std::cout << ">>> DumpRequest():" << std::endl;
         std::cout << req.method_string() << ' ' << req.target() << std::endl;
-
+        // Выводим заголовки запроса
         for (const auto& header : req) {
             std::cout << "  "sv << header.name_string() << ": "sv << header.value() << std::endl;
         }
@@ -119,7 +125,7 @@ private:
     }
     void DumpResponse(const StringResponse& res) {
         std::cout << ">>> DumpResponse():" << std::endl;
-
+        // Выводим заголовки запроса
         for (const auto& header : res) {
             std::cout << "  "sv << header.name_string() << ": "sv << header.value() << std::endl;
         }
