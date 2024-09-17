@@ -82,7 +82,7 @@ public:
     const std::vector<Player>& GetPlayers() const { return players_; }
 
 private:
-    model::Dog*               dog_;
+    model::Dog* dog_;
     const model::GameSession* session_;
     //
     std::vector<Player> players_;
@@ -119,9 +119,9 @@ private:
 
 private:
     model::Game& game_;
-    Players      players_;
-    bool         debug_mode_;
-    bool         randomize_spawn_;
+    Players players_;
+    bool debug_mode_;
+    bool randomize_spawn_;
 }; 
 
 }   // namespace app
