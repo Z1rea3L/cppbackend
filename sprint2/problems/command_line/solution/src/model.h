@@ -174,11 +174,11 @@ public:
 
     std::string Serialize() const;
 
-    json::array SerializeRoads();
+    boost::json::array SerializeRoads();
 
-    json::array SerializeBuildings();
+    boost::json::array SerializeBuildings();
 
-    json::array SerializeOffices();
+    boost::json::array SerializeOffices();
 
 private:
     using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
