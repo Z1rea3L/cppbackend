@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <boost/json.hpp>
 
 #include "tagged.h"
 
@@ -172,6 +173,12 @@ public:
     void AddOffice(Office office);
 
     std::string Serialize() const;
+
+    boost::json::array SerializeRoads()const;
+
+    boost::json::array SerializeBuildings()const;
+
+    boost::json::array SerializeOffices()const;
 
 private:
     using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
