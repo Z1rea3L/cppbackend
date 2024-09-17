@@ -67,7 +67,7 @@ model::Game LoadGame(const fs::path& config_file) {
     return game;
 }
 
-void LoadRoads(json::array& roads, model::Map& map){
+void LoadRoads(const boost::json::array& roads, model::Map& map){
     for (const auto& road : roads) {
         int x0 = json::value_to< int >(road.as_object().at("x0"));
         int y0 = json::value_to< int >(road.as_object().at("y0"));
@@ -89,7 +89,7 @@ void LoadRoads(json::array& roads, model::Map& map){
     }
 }
 
-void LoadBuildings(json::array& buildings, model::Map& map){
+void LoadBuildings(const boost::json::array& buildings, model::Map& map){
     for (const auto& building : buildings) {
         int x = json::value_to< int >(building.as_object().at("x"));
         int y = json::value_to< int >(building.as_object().at("y"));
@@ -100,7 +100,7 @@ void LoadBuildings(json::array& buildings, model::Map& map){
     }
 }
 
-void LoadOffices(json::array& offices, model::Map& map){
+void LoadOffices(const boost::json::array& offices, model::Map& map){
     for (const auto& office : offices) {
         std::string id = json::value_to< std::string >(office.as_object().at("id"));
         int x = json::value_to< int >(office.as_object().at("x"));
