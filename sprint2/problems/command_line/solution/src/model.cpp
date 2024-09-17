@@ -1,5 +1,3 @@
-#include <boost/json.hpp>
-
 #include "model.h"
 
 #include <stdexcept>
@@ -45,6 +43,16 @@ std::string Map::Serialize() const {
     map["id"]   = *id_;
     map["name"] = name_;
 
+    map["roads"] = SerializeRoads();
+
+    map["buildings"] = SerializeBuildings();
+
+    map["offices"] = SerializeOffices();
+
+    return json::serialize(map);
+}
+
+boost::json::array Map::SerializeRoads()const{
     json::array json_roads;
     for (const auto& road : roads_) {
         json::object json_road;
@@ -60,8 +68,10 @@ std::string Map::Serialize() const {
         }
         json_roads.push_back(json_road);
     }
-    map["roads"] = json_roads;
+    return json_roads;
+}
 
+boost::json::array Map::SerializeBuildings()const{
     json::array json_buildings;
     for (const auto& building : buildings_) {
         json::object json_building;
@@ -72,8 +82,10 @@ std::string Map::Serialize() const {
         json_building["h"] = rect.size.height;
         json_buildings.push_back(json_building);
     }
-    map["buildings"] = json_buildings;
+    return json_buildings;
+}
 
+boost::json::array Map::SerializeOffices()const{
     json::array json_offices;
     for (const auto& office : offices_) {
         json::object json_office;
@@ -87,9 +99,7 @@ std::string Map::Serialize() const {
         json_office["offsetY"] = off.dy;
         json_offices.push_back(json_office);
     }
-    map["offices"] = json_offices;
-
-    return json::serialize(map);
+    return json_offices;
 }
 
 void Map::AddOffice(Office office) {
@@ -111,13 +121,13 @@ bool MoveComparator(const Movement& first, const Movement& second) {
     if ( first.distanse < second.distanse ) {
         return true;
     }
-    return (int)first.stop > (int)second.stop;
+    return static_cast<int>(first.stop) > static_cast<int>(second.stop);
 }
 
 void Dog::Move(uint32_t time_delta, const Map::Roads& roads) {
     if ( IsStopped() )
         return;
-    double time = (double)time_delta / 1000;
+    double time = static_cast<double>(time_delta) / 1000;
     std::vector<Movement> real_moves;
     for (const auto& road : roads) {
         real_moves.push_back(MoveOnRoad(time, road));
@@ -140,15 +150,15 @@ Movement Dog::MoveOnRoad(double time, const Road& road) {
     if ( road.IsVertical() ) {
         // x
         double cur_x = pos_.x;
-        double left  = (double)road.GetStart().x - ROAD_WIDTH / 2;
-        double right = (double)road.GetStart().x + ROAD_WIDTH / 2;
+        double left  = static_cast<double>(road.GetStart().x) - ROAD_WIDTH / 2;
+        double right = static_cast<double>(road.GetStart().x) + ROAD_WIDTH / 2;
         if ( cur_x < left || cur_x > right ) {
             return { 0.0, true };
         }
         // y
         double cur_y = pos_.y;
-        double beg_y = (double)(road.GetStart().y < road.GetEnd().y ? road.GetStart().y : road.GetEnd().y) - ROAD_WIDTH / 2;
-        double end_y = (double)(road.GetEnd().y > road.GetStart().y ? road.GetEnd().y : road.GetStart().y) + ROAD_WIDTH / 2;
+        double beg_y = static_cast<double>(road.GetStart().y < road.GetEnd().y ? road.GetStart().y : road.GetEnd().y) - ROAD_WIDTH / 2;
+        double end_y = static_cast<double>(road.GetEnd().y > road.GetStart().y ? road.GetEnd().y : road.GetStart().y) + ROAD_WIDTH / 2;
         if ( cur_y < beg_y || cur_y > end_y ) {
             return { 0.0, true };
         }
@@ -179,15 +189,15 @@ Movement Dog::MoveOnRoad(double time, const Road& road) {
     } else {
         // y
         double cur_y = pos_.y;
-        double down  = (double)road.GetStart().y - ROAD_WIDTH / 2;
-        double up    = (double)road.GetStart().y + ROAD_WIDTH / 2; 
+        double down  = static_cast<double>(road.GetStart().y) - ROAD_WIDTH / 2;
+        double up    = static_cast<double>(road.GetStart().y) + ROAD_WIDTH / 2; 
         if ( cur_y < down || cur_y > up ) { 
             return { 0.0, true };
         }
         // x
         double cur_x = pos_.x;
-        double beg_x = (double)(road.GetStart().x < road.GetEnd().x ? road.GetStart().x : road.GetEnd().x) - ROAD_WIDTH / 2;
-        double end_x = (double)(road.GetEnd().x > road.GetStart().x ? road.GetEnd().x : road.GetStart().x) + ROAD_WIDTH / 2;
+        double beg_x = static_cast<double>(road.GetStart().x < road.GetEnd().x ? road.GetStart().x : road.GetEnd().x) - ROAD_WIDTH / 2;
+        double end_x = static_cast<double>(road.GetEnd().x > road.GetStart().x ? road.GetEnd().x : road.GetStart().x) + ROAD_WIDTH / 2;
         if ( cur_x < beg_x || cur_x > end_x ) {
             return { 0.0, true };
         }
@@ -253,3 +263,4 @@ GameSession* Game::AddSession(const Map* map) {
 }
 
 }  // namespace model
+

@@ -1,5 +1,4 @@
 #include "sdk.h"
-//
 #include <boost/program_options.hpp>
 
 #include <boost/asio/io_context.hpp>
@@ -152,12 +151,13 @@ fs::path GetAndCheckPath(const std::string& path_str, bool is_dir) {
 
     return game_path;
 }
-
+// Запускает функцию fn на n потоках, включая текущий
 template <typename Fn>
 void RunWorkers(unsigned n, const Fn& fn) {
     n = std::max(1u, n);
     std::vector<std::jthread> workers;
     workers.reserve(n - 1);
+    // Запускаем n-1 рабочих потоков, выполняющих функцию fn
     while (--n) {
         workers.emplace_back(fn);
     }

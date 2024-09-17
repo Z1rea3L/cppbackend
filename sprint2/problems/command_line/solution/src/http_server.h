@@ -77,15 +77,7 @@ private:
     virtual std::shared_ptr<SessionBase> GetSharedThis() = 0;
 
 private:
-    std::string MethodToString(http::verb verb) {
-        switch ( verb ) {
-            case http::verb::get:  return "GET";
-            case http::verb::head: return "HEAD";
-            case http::verb::post: return "POST";
-            case http::verb::put:  return "PUT";
-        }
-        return "UNKNOWN";
-    }
+    std::string MethodToString(http::verb verb);
     
 private:
     beast::tcp_stream  stream_;
