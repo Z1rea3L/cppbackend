@@ -11,7 +11,7 @@
 #include <boost/json.hpp>
 
 #include "tagged.h"
-
+ 
 namespace model {
 
 using Dimension = int;
