@@ -52,7 +52,7 @@ std::string Map::Serialize() const {
     return json::serialize(map);
 }
 
-json::array Map::SerializeRoads(){
+boost::json::array Map::SerializeRoads()const{
     json::array json_roads;
     for (const auto& road : roads_) {
         json::object json_road;
@@ -71,7 +71,7 @@ json::array Map::SerializeRoads(){
     return json_roads;
 }
 
-json::array Map::SerializeBuildings(){
+boost::json::array Map::SerializeBuildings()const{
     json::array json_buildings;
     for (const auto& building : buildings_) {
         json::object json_building;
@@ -85,7 +85,7 @@ json::array Map::SerializeBuildings(){
     return json_buildings;
 }
 
-json::array Map::SerializeOffices(){
+boost::json::array Map::SerializeOffices()const{
     json::array json_offices;
     for (const auto& office : offices_) {
         json::object json_office;
