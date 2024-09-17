@@ -71,17 +71,13 @@ void LoadRoads(const boost::json::array& roads, model::Map& map){
             int x1 = json::value_to< int >(road.as_object().at("x1"));
             model::Road road_model(model::Road::HORIZONTAL, {x0, y0}, x1);
             map.AddRoad(road_model);
-        } catch (...) {
-            throw std::runtime_error("LoadRoads error");
-        }
+        } catch (...) {}
 
         try {
             int y1 = json::value_to< int >(road.as_object().at("y1"));
             model::Road road_model(model::Road::VERTICAL, {x0, y0}, y1);
             map.AddRoad(road_model);
-        } catch (...) {
-            throw std::runtime_error("LoadRoads error");
-        }
+        } catch (...) {}
     }
 }
 
