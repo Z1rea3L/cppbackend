@@ -55,5 +55,15 @@ void SessionBase::Close() {
         return ReportError(ec, "close"sv);
     }
 }
+
+std::string SessionBase::MethodToString(http::verb verb) {
+    switch ( verb ) {
+        case http::verb::get:  return "GET";
+        case http::verb::head: return "HEAD";
+        case http::verb::post: return "POST";
+        case http::verb::put:  return "PUT";
+    }
+    return "UNKNOWN";
+}
     
 }  // namespace http_server
