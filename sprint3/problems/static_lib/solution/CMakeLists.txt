@@ -1,69 +1,46 @@
-cmake_minimum_required(VERSION 3.13)
-
-project(game_server CXX)
+cmake_minimum_required(VERSION 3.9)
+project(GameServer CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 # обратите внимание на аргумент TARGETS у команды conan_basic_setup
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
-set(SRCDIR src)
-
-set(EXECUTE game_server)
-set(MODEL_LIB model)
-set(JSON_LIB json_parser)
-
-
-set(SRC 
-	${SRCDIR}/main.cpp
-  ${SRCDIR}/logger.cpp
-#	${SRCDIR}/boost_json.cpp
-	${SRCDIR}/json_loader.cpp
-#	${SRCDIR}/tag_invokers.cpp
-  ${SRCDIR}/util.cpp
-  ${SRCDIR}/application.cpp
-  ${SRCDIR}/response_maker.cpp
-  ${SRCDIR}/api_handler.cpp
-  ${SRCDIR}/content_type.cpp
-	#${SRCDIR}/request_handler.cpp
-)
-
-set(HEADER 
-  ${SRCDIR}/sdk.h
-  ${SRCDIR}/logger.h
-  ${SRCDIR}/json_loader.h
-  ${SRCDIR}/http_server.h
-  ${SRCDIR}/tagged.h
-#  ${SRCDIR}/tag_invokers.h
-  ${SRCDIR}/application.h
-  ${SRCDIR}/request_handler.h
-  ${SRCDIR}/content_type.h
-  ${SRCDIR}/util.h
-  ${SRCDIR}/response_maker.h
-
-)
-
-
-
-
-find_package(Boost 1.78.0 REQUIRED)
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-endif()
-
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(Boost REQUIRED COMPONENTS log log_setup system filesystem thread regex chrono atomic)
 
+add_subdirectory(src/GameModelLib)
 
-include(CTest)
-include(${CONAN_BUILD_DIRS_CATCH2}/Catch.cmake)
+add_executable(game_server 
+	src/main.cpp
+	src/serialization/json_loader.h
+	src/serialization/json_loader.cpp
+	src/serialization/serialization.h
+	src/serialization/serialization.cpp
+	src/networking/http_server.h
+	src/networking/http_server.cpp
+	src/handlers/front_controller.h
+	src/handlers/api_request_handler.h
+	src/handlers/static_request_handler.h
+	src/handlers/static_request_handler.cpp	
+	src/logging/logger.h
+	src/utility/ticker.h
+	src/utility/loot_type_info.h
+	src/utility/loot_type_info.cpp
+	src/application/application.h
+	src/application/application.cpp
+)
 
-add_subdirectory(${SRCDIR}/model)
-add_subdirectory(${SRCDIR}/json_parser)
+target_include_directories(game_server PRIVATE
+    src/serialization
+    src/networking
+    src/handlers
+    src/logging
+    src/utility
+    src/application
+)
 
-add_executable(${EXECUTE} ${SRC} ${HEADER})
-target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
-target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost ${MODEL_LIB} ${JSON_LIB})
-add_subdirectory(${SRCDIR}/http_server)
-add_subdirectory(tests)
-#catch_discover_tests(${CMAKE_BINARY_DIR}/bin/game_server_tests) 
+# используем "импортированную" цель CONAN_PKG::boost
+target_include_directories(game_server PRIVATE CONAN_PKG::boost)
+target_link_libraries(game_server PRIVATE GameModel CONAN_PKG::boost Threads::Threads)
