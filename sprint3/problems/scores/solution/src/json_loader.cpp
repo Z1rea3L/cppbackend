@@ -7,9 +7,8 @@ namespace json_loader {
 using namespace std::literals;
 
 namespace json = boost::json;
-namespace fs   = std::filesystem;
+namespace fs = std::filesystem;
 
-///////////////////////////////////////////
 std::string ReadFile(const fs::path& path) {
     std::ifstream f(path, std::ios::in | std::ios::binary);
     if ( !f ) {
@@ -23,27 +22,24 @@ std::string ReadFile(const fs::path& path) {
 }
 
 model::Game LoadGame(const fs::path& config_file) {
-    constexpr double   DEFAULT_DOG_SPEED    = 1.0;
+    constexpr double DEFAULT_DOG_SPEED = 1.0;
     constexpr unsigned DEFAULT_BAG_CAPACITY = 3;
-    constexpr int      MILLISECONDS         = 1000;
-    //
+    constexpr int MILLISECONDS = 1000;
+
     std::string json_config = ReadFile(config_file);
     try {
         json::object config = json::parse(json_config).as_object();
 
-        // try get defaultDogSpeed
         double default_dog_speed = DEFAULT_DOG_SPEED;
         try {
             default_dog_speed = config.at("defaultDogSpeed").as_double();
         } catch (...) { }
 
-        // try get defaultBagCapacity
         unsigned default_bag_capacity = DEFAULT_BAG_CAPACITY;
         try {
             default_bag_capacity = config.at("defaultBagCapacity").as_int64();
         } catch (...) { }
 
-        // try get loot generator config
         double period;
         double probability;
         try {
@@ -54,30 +50,28 @@ model::Game LoadGame(const fs::path& config_file) {
             throw std::runtime_error(err);
         }
 
-        // create game
         model::Game game(static_cast<unsigned>(period * MILLISECONDS), probability);
 
-        // try get maps
         for (auto& json_map : config.at("maps").as_array()) {
-            // map
+            //map
             model::Map map = model::Map::FromJson(json_map.as_object(), default_dog_speed, default_bag_capacity);
 
-            // loot
+            //loot
             for (const auto& json_loot_type : json_map.as_object().at("lootTypes").as_array()) {
                 map.AddLootType(model::LootType::FromJson(json_loot_type.as_object()));
             }
-            
-            // roads
+
+            //roads
             for (const auto& json_road : json_map.as_object().at("roads").as_array()) {
                 map.AddRoad(model::Road::FromJson(json_road.as_object()));
             }
 
-            // buildings
+            //buildings
             for (const auto& json_building : json_map.as_object().at("buildings").as_array()) {
                 map.AddBuilding(model::Building::FromJson(json_building.as_object()));
             }
 
-            // offices
+            //offices
             for (const auto& json_office : json_map.as_object().at("offices").as_array()) {
                 map.AddOffice(model::Office::FromJson(json_office.as_object()));
             }
@@ -91,4 +85,4 @@ model::Game LoadGame(const fs::path& config_file) {
     }
 }
 
-}  // namespace json_loader
+}//namespace json_loader

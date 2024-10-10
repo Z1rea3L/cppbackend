@@ -25,16 +25,16 @@ public:
         unsigned    http_version = req.version();
         bool        keep_alive   = req.keep_alive();
         std::string target(req.target());
-        //
+
         StringResponse response;
-        if ( api_.CanAccept(target) ) { // request to API /////////////////////////////////
+        if ( api_.CanAccept(target) ) { // request to API 
             response = api_.Response(req);  // without strand
-        } else {                        // get static content /////////////////////////////
+        } else {                        // get static content 
             std::string wanted_file = root_.string() + target;
             if ( target == "/" ) {
                 wanted_file += "index.html";
             }
-            //
+
             if ( !IsSubPath(wanted_file) ) {
                 response = Response::BadRequest(http_version, keep_alive);
             } else if ( !std::filesystem::exists(wanted_file) ) {
@@ -52,32 +52,24 @@ public:
                 }
 
                 response.body() = std::move(file);
-                // Метод prepare_payload заполняет заголовки Content-Length и Transfer-Encoding
-                // в зависимости от свойств тела сообщения
                 response.prepare_payload();
                 send(response);
                 return;
             }
         }
-        //
         send(response);
     }
 
 private:
-    // Возвращает true, если каталог path содержится внутри base.
     bool IsSubPath(fs::path path);
-
     std::string GetLowCaseExtention(fs::path path);
-
     std::string GetMime(fs::path path);
-
     void DumpRequest(const StringRequest& req);
     void DumpResponse(const StringResponse& res);
 
 private:
-    Strand          api_strand_;
-    ApiHandler      api_;
+    Strand api_strand_;
+    ApiHandler api_;
     const fs::path& root_;
 };
-
-}  // namespace http_handler
+}//namespace http_handler

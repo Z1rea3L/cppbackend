@@ -58,4 +58,4 @@ inline Point2D operator+(const Vec2D& lhs, Point2D rhs) {
     return rhs += lhs;
 }
 
-}  // namespace geom
+}//namespace geom

@@ -21,7 +21,6 @@ namespace json = boost::json;
 
 using namespace std::literals;
 
-//// Model's Aux ///////////////////////////////////////////////////////////////////
 int GetRandom(int from, int to);
 
 using Dimension = int;
@@ -49,13 +48,11 @@ struct Offset {
     Dimension dx, dy;
 };
 
-
-//// My Aux ////
 enum Direction {
-    NORTH,          // U
-    SOUTH,          // D
-    WEST,           // L
-    EAST            // R
+    NORTH, // U
+    SOUTH, // D
+    WEST,  // L
+    EAST   // R
 };
 
 std::string DirToStr(Direction dir);
@@ -93,23 +90,20 @@ struct Movement {
 
 bool MoveComparator(const Movement& first, const Movement& second);
 
-
-
-//// LootType //////////////////////////////////////////////////////////////////////
 struct LootType {
-    constexpr static std::string_view TYPE_DEFAULT     = "obj"sv;
-    constexpr static double           SCALE_DEFAULT    = 1.0;
-    constexpr static int              ROTATION_DEFAULT = -1;
-    constexpr static std::string_view COLOR_DEFAULT    = ""sv;
-    //
+    constexpr static std::string_view TYPE_DEFAULT = "obj"sv;
+    constexpr static double SCALE_DEFAULT    = 1.0;
+    constexpr static int ROTATION_DEFAULT = -1;
+    constexpr static std::string_view COLOR_DEFAULT = ""sv;
+
     LootType() = default;
-    LootType(std::string      name,
-             std::string      file,
-             std::string_view type     = TYPE_DEFAULT,
-             double           scale    = SCALE_DEFAULT,
-             int              rotation = ROTATION_DEFAULT,
-             std::string_view color    = COLOR_DEFAULT,
-             unsigned         value    = 0)
+    LootType(std::string name,
+             std::string file,
+             std::string_view type = TYPE_DEFAULT,
+             double scale = SCALE_DEFAULT,
+             int rotation = ROTATION_DEFAULT,
+             std::string_view color = COLOR_DEFAULT,
+             unsigned value = 0)
         : name_(name)
         , file_(file)
         , type_(type)
@@ -122,21 +116,18 @@ struct LootType {
     std::string name_;
     std::string file_;
     std::string type_;
-    double      scale_;
-    int         rotation_;
+    double scale_;
+    int rotation_;
     std::string color_;
-    unsigned    value_;
+    unsigned value_;
 
     json::object ToJson() const;
     static LootType FromJson(json::object json_loot_type);
 };
 
-
-
-//// LostObject ////////////////////////////////////////////////////////////////////
 struct LostObject {
     static unsigned CURR_ID;
-    //
+
     LostObject() = default;
     LostObject(unsigned type, const Position& position)
         : id_(CURR_ID++)
@@ -151,9 +142,6 @@ struct LostObject {
     json::object ToJson() const;
 };
 
-
-
-//// Road //////////////////////////////////////////////////////////////////////////
 class Road {
     struct HorizontalTag {
         explicit HorizontalTag() = default;
@@ -201,9 +189,6 @@ private:
     Point end_;
 };
 
-
-
-//// Building //////////////////////////////////////////////////////////////////////
 class Building {
 public:
     explicit Building(Rectangle bounds) noexcept
@@ -221,9 +206,6 @@ private:
     Rectangle bounds_;
 };
 
-
-
-//// Office ////////////////////////////////////////////////////////////////////////
 class Office {
 public:
     using Id = util::Tagged<std::string, Office>;
@@ -250,22 +232,18 @@ public:
     static Office FromJson(json::object json_office);
 
 private:
-    Id     id_;
-    Point  position_;
+    Id id_;
+    Point position_;
     Offset offset_;
 };
 
-
-
-//// Map ///////////////////////////////////////////////////////////////////////////
 class Map {
 public:
-    using Id          = util::Tagged<std::string, Map>;
-    using Roads       = std::vector<Road>;
-    using Buildings   = std::vector<Building>;
-    using Offices     = std::vector<Office>;
-    //
-    using LootTypes   = std::vector<LootType>;
+    using Id = util::Tagged<std::string, Map>;
+    using Roads = std::vector<Road>;
+    using Buildings = std::vector<Building>;
+    using Offices = std::vector<Office>;
+    using LootTypes = std::vector<LootType>;
 
     Map(Id id, std::string name, double dog_speed, unsigned bag_capacity) noexcept
         : id_(std::move(id))
@@ -311,18 +289,18 @@ public:
     std::string Serialize() const;
     static Map FromJson(json::object json_map, double default_dog_speed, unsigned default_bag_capacity);
 
-    ////
     size_t GetLootsCount() const noexcept {
         return loot_types_.size();
     }
+
     const LootTypes& GetLootTypes() const noexcept {
         return loot_types_;
     }
+
     void AddLootType(const LootType& loot_type) {
         loot_types_.emplace_back(loot_type);
     }
 
-    ////
     unsigned GetBagCapacity() const noexcept { return bag_capacity_; }
 
 private:
@@ -330,35 +308,25 @@ private:
 
     Id id_;
     std::string name_;
-    Roads       roads_;
-    Buildings   buildings_;
-    //
+    Roads roads_;
+    Buildings buildings_;
     OfficeIdToIndex warehouse_id_to_index_;
-    Offices   offices_;
-    //
-    double    dog_speed_;
-    //
+    Offices offices_;
+    double dog_speed_;
     LootTypes loot_types_;
-    //
-    unsigned  bag_capacity_;
+    unsigned bag_capacity_;
 };
 
-
-
-//// Bag ///////////////////////////////////////////////////////////////////////////
 struct BagItem {
-    size_t      id_;
-    unsigned    type_;
+    size_t id_;
+    unsigned type_;
 };
 
 using Bag = std::vector<BagItem>;
 
-
-
-//// GameProvider //////////////////////////////////////////////////////////////////
-constexpr static double LOOT_WIDTHS   = 0.0;
+constexpr static double LOOT_WIDTHS = 0.0;
 constexpr static double OFFICE_WIDTHS = 0.5;
-constexpr static double DOG_WIDTHS    = 0.6;
+constexpr static double DOG_WIDTHS = 0.6;
 
 class GameProvider : public collision_detector::ItemGathererProvider {
 public:
@@ -366,28 +334,28 @@ public:
     collision_detector::Item GetItem(size_t idx) const override { return items_.at(idx); }
     size_t GatherersCount() const override { return gatherers_.size(); }
     collision_detector::Gatherer GetGatherer(size_t idx) const override { return gatherers_.at(idx); }
-    //
+
     void PushItem(collision_detector::Item item) { items_.push_back(item); }
     void PushGatherer(collision_detector::Gatherer gatherer) { gatherers_.push_back(gatherer); }
+
 private:
-    std::vector<collision_detector::Item>     items_;
+    std::vector<collision_detector::Item> items_;
     std::vector<collision_detector::Gatherer> gatherers_;
 };
 
-
-//// Dog ///////////////////////////////////////////////////////////////////////////
 class Dog {
     const double ROAD_WIDTH = 0.8;
+
 public:
     Dog(std::string name, uint32_t id) : name_(name), id_(id) { }
-    //
-    const std::string GetName()     const { return name_;      }
-    const uint32_t    GetId()       const { return id_;        }
-    Position          GetPosition() const { return pos_;       }
-    Position          GetStartPos() const { return start_pos_; }
-    Speed             GetSpeed()    const { return speed_;     }
-    std::string       GetDir()      const { return DirToStr(dir_); }
-    //
+
+    const std::string GetName() const { return name_;}
+    const uint32_t GetId() const { return id_;}
+    Position GetPosition() const { return pos_;}
+    Position GetStartPos() const { return start_pos_;}
+    Speed GetSpeed() const { return speed_;}
+    std::string GetDir() const { return DirToStr(dir_); }
+
     void SetPosition(Position pos) { pos_ = pos; }
     void SetSpeed(double speed, std::string move) {
         if ( move.empty() ) { Stop(); return; }
@@ -396,9 +364,9 @@ public:
         if ( move == "R" ) { dir_ = EAST;  speed_ = { speed, 0 }; return; }
         if ( move == "L" ) { dir_ = WEST;  speed_ = {-speed, 0 }; return; }
     }
-    //
+
     void Move(uint32_t time_delta, const Map::Roads& roads);
-    //
+
     const Bag& GetBag() const { return bag_; }
     void SetBagCapacity(unsigned bag_capacity) { bag_capacity_ = bag_capacity; }
     bool PushIntoBag(BagItem bag_item, unsigned value);
@@ -412,23 +380,17 @@ private:
 
 private:
     std::string name_;
-    uint32_t    id_;
-    //
-    Position    pos_{0, 0};
-    Position    start_pos_{0, 0};
-    Speed       speed_{0, 0};
-    Direction   dir_{NORTH};
-    //
-    Bag         bag_;
-    unsigned    bag_capacity_ = 0;
-    unsigned    score_ = 0;
-    unsigned    value_ = 0;
+    uint32_t id_;
+    Position pos_{0, 0};
+    Position start_pos_{0, 0};
+    Speed speed_{0, 0};
+    Direction dir_{NORTH};
+    Bag bag_;
+    unsigned bag_capacity_ = 0;
+    unsigned score_ = 0;
+    unsigned value_ = 0;
 };
 
-
-
-
-//// GameSession ///////////////////////////////////////////////////////////////////
 class GameSession {
 public:
     using LostObjects = std::vector<LostObject>;
@@ -436,15 +398,15 @@ public:
     explicit GameSession(const Map* map) : map_(map) { }
     Dog* AddDog(std::string name, uint32_t id) { 
         dogs_.emplace_back(name, id);
-        return &dogs_.back();//at(dogs_.size() - 1);
+        return &dogs_.back();
     }
-    //
+
     const Map* GetMap() const { return map_; }
     const std::deque<Dog>& GetDogs() const { return dogs_; }
     size_t GetDogsCount()  const noexcept { return dogs_.size(); }
-    //
+
     void Tick(uint32_t time_delta, unsigned lost_count);
-    //
+
     size_t GetLostsCount() const noexcept { return lost_objects_.size(); }
     const LostObjects& GetLostObjects() const noexcept { return lost_objects_; }
     
@@ -453,19 +415,14 @@ public:
     }
 
 private:
-    const Map*      map_;
+    const Map* map_;
     std::deque<Dog> dogs_;
-    //
-    LostObjects     lost_objects_;
+    LostObjects lost_objects_;
 };
 
-
-
-
-//// Game //////////////////////////////////////////////////////////////////////////
 class Game {
 public:
-    using Maps     = std::vector<Map>;
+    using Maps = std::vector<Map>;
     using Sessions = std::vector<GameSession>;
     constexpr static size_t SESSION_MAX = 16;
 
@@ -486,7 +443,6 @@ public:
         return nullptr;
     }
 
-    //
     GameSession* AddSession(const Map* map);
 
     const Sessions& GetSessions() const noexcept {
@@ -509,14 +465,11 @@ public:
 private:
     using MapIdHasher = util::TaggedHasher<Map::Id>;
     using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;
-    //
-    Maps         maps_;
+
+    Maps maps_;
     MapIdToIndex map_id_to_index_;
-    //
-    Sessions     sessions_;
+    Sessions sessions_;
     MapIdToIndex map_id_to_session_;
-    //
     loot_gen::LootGenerator loot_gen_;
 };
-
-}  // namespace model
+}//namespace model

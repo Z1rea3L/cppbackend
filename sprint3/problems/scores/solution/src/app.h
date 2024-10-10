@@ -18,10 +18,8 @@ namespace app {
 
 using namespace std::literals;
 
-namespace json  = boost::json;
+namespace json = boost::json;
 
-
-//// Player ///////////////////////////////////////////////////////////////////////////////////////
 class Player {
 public:
     Player(model::Dog* dog, const model::GameSession* session) : dog_(dog), session_(session) { }
@@ -31,12 +29,11 @@ public:
 private:
     model::Dog* dog_;
     const model::GameSession* session_;
-};  // Player
+};
 
-
-//// PlayerToken Generator ////////////////////////////////////////////////////////////////////////
 class PlayerToken {
     constexpr static size_t TOKEN_SIZE = 32;
+
 public:
     PlayerToken() = default;
     std::string Get() {
@@ -46,22 +43,23 @@ public:
         while ( token.size() < TOKEN_SIZE ) {
             token = "0" + token;
         }
+
         return token;
     }
+
 private:
     std::random_device random_device_;
     std::mt19937_64 generator1_{[this] {
         std::uniform_int_distribution<std::mt19937_64::result_type> dist;
         return dist(random_device_);
     }()};
+
     std::mt19937_64 generator2_{[this] {
         std::uniform_int_distribution<std::mt19937_64::result_type> dist;
         return dist(random_device_);
     }()};
-};  // PlayerToken
+};
 
-
-//// Players //////////////////////////////////////////////////////////////////////////////////////
 class Players {
 public:
     Players() = default;
@@ -70,34 +68,36 @@ public:
         const size_t index = players_.size();
         Player player(dog, session);
         players_.push_back(player);
-        //
         token_to_index_[token] = index;
-        //
+
         return token;
     }
+
     bool HasToken(std::string token) const {
         return token_to_index_.find(token) != token_to_index_.end();
     }
+
     Player* FindByToken(std::string token) {
         if ( HasToken(token) ) {
             return &players_.at(token_to_index_.at(token));
         }
+
         return nullptr;
     }
+
     const std::vector<Player>& GetPlayers() const { return players_; }
 
 private:
-    model::Dog*               dog_;
+    model::Dog* dog_;
     const model::GameSession* session_;
-    //
+
     std::vector<Player> players_;
     std::unordered_map<std::string, size_t> token_to_index_;
-};  // Players
+};
 
-
-//// Application //////////////////////////////////////////////////////////////////////////////////
 class Application {
     uint32_t dog_id_;
+
 public:
     explicit Application(model::Game& game, bool debug_mode, bool randomize_spawn) 
             : game_(game)
@@ -106,31 +106,20 @@ public:
         dog_id_ = 0;
     }
     
-    // unauthorized
     bool GetMap(const std::string& map_id, std::string& res_body);
     bool GetMaps(std::string& res_body);
     bool TryJoin(const std::string& user_name, const std::string& map_id, std::string& res_body);
-    // authorized
+
     bool GetPlayers(const std::string& token, std::string& res_body);
     bool GetState(const std::string& token, std::string& res_body);
     bool Move(const std::string& token, const std::string& move, std::string& res_body);
-    // debug (unauthorized)
+
     std::string Tick(uint32_t time_delta);
 
 private:
-/*
-    int GetRandom(int from, int to) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(from, to);
-        return dis(gen);
-    }
-*/
-private:
     model::Game& game_;
-    Players      players_;
-    bool         debug_mode_;
-    bool         randomize_spawn_;
-};  // Application
-
-}   // namespace app
+    Players players_;
+    bool debug_mode_;
+    bool randomize_spawn_;
+};
+}//namespace app
