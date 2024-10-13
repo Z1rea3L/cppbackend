@@ -18,7 +18,7 @@ StringResponse ApiHandler::Response(const StringRequest& req) {
     return Response::BadRequest("badRequest"s, "Unknown API target"s, http_version, keep_alive);
 }
 
-static std::string ApiHandler::MethodToString(http::verb verb) {
+std::string ApiHandler::MethodToString(http::verb verb) {
     switch ( verb ) {
         case http::verb::get: return "GET";
         case http::verb::head: return "HEAD";
