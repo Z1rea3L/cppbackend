@@ -51,7 +51,7 @@ protected:
             }
         }
         */
-        auto header_it = std::find_if(response.begin(), response.end(), [](const auto& header){return header.name_string() == "Content-Type"});
+        auto header_it = std::find_if(response.begin(), response.end(), [](const auto& header){return header.name_string() == "Content-Type";});
         if(header_it != response.end()){
             content_type = header_it->value();
         }
