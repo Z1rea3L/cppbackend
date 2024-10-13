@@ -44,13 +44,7 @@ protected:
     template <typename Body, typename Fields>
     void Write(http::response<Body, Fields>&& response) {
         std::string_view content_type = "null"s;
-        /*for (const auto& header : response) {
-            if ( header.name_string() == "Content-Type" ) {
-                content_type = header.value();
-                break;
-            }
-        }
-        */
+
         auto header_it = std::find_if(response.begin(), response.end(), [](const auto& header){return header.name_string() == "Content-Type";});
         if(header_it != response.end()){
             content_type = header_it->value();
