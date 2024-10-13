@@ -38,7 +38,7 @@ bool ApiHandler::CheckToken(const StringRequest& req, std::string& token) {
 
     bool is_ok = true;
     if ( token.size() == BEARER.size() + TOKEN_SIZE ) {
-        if ( token.find(BEARER) == 0 ) {
+        if ( token.starts_with(BEARER)) {
             token = token.substr(BEARER.size());
             size_t count = std::count_if(token.begin(), token.end(), [](unsigned char c){ return std::isxdigit(c); } );
         } else {

@@ -183,8 +183,8 @@ int main(int argc, const char* argv[]) {
 
         //Загрузка карты, постройка модели игры
         model::Game game = json_loader::LoadGame(GetAndCheckPath(args->config_file, false));
-        fs::path    root = GetAndCheckPath(args->www_root, true);
-        bool  debug_mode = args->time_delta == 0 ? true : false;
+        fs::path root = GetAndCheckPath(args->www_root, true);
+        bool debug_mode = !args->time_delta;
         app::Application app(game, debug_mode, args->randomize);
 
         //Инициализация

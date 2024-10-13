@@ -32,40 +32,40 @@ public:
     StringResponse Response(const StringRequest& req);
 
 private:
-    std::string MethodToString(http::verb verb);
+    static std::string MethodToString(http::verb verb);
 
     bool CheckToken(const StringRequest& req, std::string& token);
 
     //map by ID
-    bool IsMapRequest(std::string target) { return target.find(MAPS) == 0 && target.size() > MAPS.size() + 1; }
+    bool IsMapRequest(std::string target) const { return target.find(MAPS) == 0 && target.size() > MAPS.size() + 1; }
     StringResponse MapResponse(const StringRequest& req);
     
     //all maps
-    bool IsMapsRequest(std::string target) { return target == MAPS; }
+    bool IsMapsRequest(std::string target) const { return target == MAPS; }
     StringResponse MapsResponse(const StringRequest& req);
 
     //join
-    bool IsJoinRequest(std::string target) { return target == JOIN; }
+    bool IsJoinRequest(std::string target) const { return target == JOIN; }
     StringResponse JoinResponse(const StringRequest& req);
 
     //players
-    bool IsPlayersRequest(std::string target) { return target == PLAYERS; }
+    bool IsPlayersRequest(std::string target) const { return target == PLAYERS; }
     StringResponse PlayersResponse(const StringRequest& req);
 
     //state
-    bool IsStateRequest(std::string target) { return target == STATE; }
+    bool IsStateRequest(std::string target) const { return target == STATE; }
     StringResponse StateResponse(const StringRequest& req);
 
     //move
-    bool IsMoveRequest(std::string target) { return target == MOVE; }
+    bool IsMoveRequest(std::string target) const { return target == MOVE; }
     StringResponse MoveResponse(const StringRequest& req);
 
     //tick
-    bool IsTickRequest(std::string target) { return target == TICK; }
+    bool IsTickRequest(std::string target) const { return target == TICK; }
     StringResponse TickResponse(const StringRequest& req);
 
     app::Application& app_;
-    bool debug_mode_;
+    bool debug_mode_ = false;
 };
 
 }//namespace http_handler
