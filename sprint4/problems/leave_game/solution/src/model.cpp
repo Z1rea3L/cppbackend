@@ -287,7 +287,7 @@ void Game::DeleteExpiredPlayers(const std::vector<RetiredSessionPlayers>& expire
 }
 
 std::vector<PlayerRecordItem> Game::GetRecords(int start, int max_items) const{
-	return GetRetiredPlayers(start, max_items);
+	return app_utility::GetRetiredPlayers(start, max_items);
 }
 
 }  // namespace model
