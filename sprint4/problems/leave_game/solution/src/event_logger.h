@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include <string> 
 namespace event_logger {
 
 void InitLogger();
