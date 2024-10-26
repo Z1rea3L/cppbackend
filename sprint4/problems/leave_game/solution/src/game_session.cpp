@@ -134,7 +134,7 @@ void GameSession::MoveDogs(int deltaTime){
 }
 
 void GameSession::InitLootGenerator(double loot_period, double loot_probability){
-	unsigned long duration = loot_period * 1000;
+	uint64_t duration = loot_period * 1000;
 	lootGen_ = std::make_shared<loot_gen::LootGenerator>(loot_gen::LootGenerator::TimeInterval{duration},
 														 loot_probability);
 }

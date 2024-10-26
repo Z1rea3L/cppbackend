@@ -1,3 +1,4 @@
+#pragma once
 #include <memory>
 #include <vector>
 #include <mutex>
@@ -74,7 +75,7 @@ private:
     size_t used_connections_ = 0;
 };
 
-namespace {
+namespace connection_pool_single{
 class ConnectionPoolSingleton{
 private:
 	static std::once_flag initInstanceFlag;
@@ -110,4 +111,4 @@ public:
 ConnectionPoolSingleton* ConnectionPoolSingleton::instance = nullptr;
 std::once_flag ConnectionPoolSingleton::initInstanceFlag;
 
-}
+}//namespace connection_pool_single

@@ -68,19 +68,24 @@ public:
                target.remove_prefix(mapPrefix.size());
 
                if(target.empty()){
-            	   resp = MakeStringResponse(http::status::ok, json_serializer::GetMapListResponce(game_), req.version(), req.keep_alive(), ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
+            	   resp = MakeStringResponse(http::status::ok, json_serializer::GetMapListResponce(game_), req.version(), req.keep_alive(), 
+				   		ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
                }else{
-
             	   target.remove_prefix(1);
             	   const auto& responce = json_serializer::GetMapContentResponce(game_, {target.begin(), target.end()});
+
             	   if(!responce.empty()){
-            		   if(req.method() == http::verb::get)
-            			   resp = MakeStringResponse(http::status::ok, responce, req.version(), req.keep_alive(), ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
-            		   else
-            			   resp = MakeStringResponse(http::status::ok, "", req.version(), req.keep_alive(), ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
+            		   if(req.method() == http::verb::get){
+            			   resp = MakeStringResponse(http::status::ok, responce, req.version(), req.keep_alive(), 
+						   		ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
+					   }else{
+            			   resp = MakeStringResponse(http::status::ok, "", req.version(), req.keep_alive(), 
+						   		ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
+					   }
 
             	   }else{
-            		   resp = MakeStringResponse(http::status::not_found, json_serializer::MakeMapNotFoundResponce(), req.version(), req.keep_alive(), ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
+            		   resp = MakeStringResponse(http::status::not_found, json_serializer::MakeMapNotFoundResponce(), req.version(), req.keep_alive(), 
+							ContentType::APPLICATION_JSON, {{http::field::cache_control, "no-cache"sv}});
             	   }
                }
                send(std::move(resp));

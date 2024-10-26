@@ -59,7 +59,7 @@ void serialize(Archive& ar, LootInfo& loot, [[maybe_unused]] const unsigned vers
 
 }  // namespace model
 
-namespace /*serialization*/ {
+namespace serialization {
 
 using InputArchive = boost::archive::text_iarchive;
 using OutputArchive = boost::archive::text_oarchive;

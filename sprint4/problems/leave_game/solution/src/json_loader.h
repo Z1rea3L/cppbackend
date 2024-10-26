@@ -1,3 +1,4 @@
+#pragma once
 #include <map>
 #include "model.h"
 using namespace model;

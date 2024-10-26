@@ -241,7 +241,7 @@ namespace json_serializer {
 
             map_obj[ "name" ] = record.name;
     	    map_obj[ "score" ] = record.score;
-    	    map_obj[ "playTime" ] = (double)record.playTime / MILLISECONDS_IN_SECOND;
+    	    map_obj[ "playTime" ] = static_cast<double>(record.playTime) / MILLISECONDS_IN_SECOND;
     	    map_ar.emplace_back(map_obj);
         }
 

@@ -55,8 +55,8 @@ private:
     void FindAdjacentRoads();
     void SetStartPositionFirstRoad();
 
-    bool RoadsCrossed(const model::Road& road1, const model::Road& road2);
-    bool RoadsAdjacent(const model::Road& road1, const model::Road& road2);
+    static bool RoadsCrossed(const model::Road& road1, const model::Road& road2);
+    static bool RoadsAdjacent(const model::Road& road1, const model::Road& road2);
 
     std::optional<size_t> FindNearestAdjacentVerticalRoad(const DogPosition& edge_point);
     std::optional<size_t> FindNearestVerticalCrossRoad(const DogPosition& newPos);

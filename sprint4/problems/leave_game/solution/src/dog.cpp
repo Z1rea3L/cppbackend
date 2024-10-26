@@ -42,7 +42,7 @@ namespace model
 			direction_ = dir;
 		}
 
-		idle_time_= 0;
+		idle_time_ = 0;
 		navigator_->SetDogSpeed(find_vel->second);
 	}
 
@@ -82,11 +82,14 @@ namespace model
 	}
 
 	void Dog::PassLootToOffice(){
-		const auto& loots =  map_->GetLoots();
-
-		for(const auto& loot : gathered_loots_){
-			score_ += loots[loot.type].GetScore();;
-		}
+		const auto& loots = map_->GetLoots(); //loots = std::vector<Loot>;
+		std::accumulate(gathered_loots_.begin(), gathered_loots_.end(), score_, [&loots](auto score, auto& loot_info){
+			return score += loots[loot_info.type].GetScore();
+		});
+		
+		//for(const auto& loot : gathered_loots_){
+		//	score_ += loots[loot.type].GetScore();
+		//}
 
 		gathered_loots_.clear();
 	}

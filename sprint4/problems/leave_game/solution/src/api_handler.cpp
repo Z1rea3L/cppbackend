@@ -94,14 +94,15 @@ std::map<std::string, std::string> GetRequestParameters(const std::string& reque
 	url_view u(request);
 	std::map<std::string, std::string> result;
 
-	for (auto param: u.params()){
+	for (auto param : u.params()){
 	    result[param.key] = param.value;
 	}
 
 	return result;
 }
 
-StringResponse ApiHandler::HandleApiRequest(const std::string& request, http::verb method, std::string_view auth_type, const std::string& body, unsigned http_version, bool keep_alive){
+StringResponse ApiHandler::HandleApiRequest(const std::string& request, http::verb method, 
+											std::string_view auth_type, const std::string& body, unsigned http_version, bool keep_alive){
 	StringResponse resp;
 	std::string np_request = GetRequestStringWithoutParameters(request);
 	auto it_handler = resp_map_.find(np_request);
@@ -277,8 +278,10 @@ bool IsValidAuthToken(const std::string& token, size_t valid_size){
 	 }
 
 	 for(auto i = 0; i < token.size(); ++i){
-		 if((token[i] < '0') || (token[i] > '9') || (token[i] < 'a') || (token[i] > 'f'))
+		 if(((token[i] < '0') || (token[i] > '9')) && 
+		 	((token[i] < 'a') || (token[i] > 'f'))){
 			 return false;
+		 }
 	 }
 
 	 return true;

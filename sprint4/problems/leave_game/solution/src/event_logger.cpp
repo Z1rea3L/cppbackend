@@ -1,3 +1,4 @@
+#include "event_logger.h"
 #include <iostream>
 #include <boost/log/core.hpp>        // для logging::core
 #include <boost/log/trivial.hpp>

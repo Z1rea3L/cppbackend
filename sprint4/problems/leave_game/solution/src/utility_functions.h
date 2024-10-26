@@ -20,7 +20,7 @@ struct AppConfig {
 
 const int MAX_DB_RECORDS = 100;
 
-namespace {
+namespace app_utility{
 
 [[nodiscard]] std::optional<Args> ParseCommandLine(int argc, const char* const argv[]) {
     namespace po = boost::program_options;
@@ -86,7 +86,7 @@ void SaveRetiredPlayer(const std::string& player_name, int score, int play_time)
 
 	model::PlayerRecordItem record{PlayerId::New().ToString(), player_name, score, play_time};
 
-	ConnectionPoolSingleton* inst = ConnectionPoolSingleton::getInstance();
+	connection_pool_single::ConnectionPoolSingleton* inst = connection_pool_single::ConnectionPoolSingleton::getInstance();
 	auto* conn_pool = inst->GetPool();
 	auto conn = conn_pool->GetConnection();
 	postgres::RetiredRepositoryImpl rep{*conn};
@@ -94,7 +94,7 @@ void SaveRetiredPlayer(const std::string& player_name, int score, int play_time)
 }
 
 std::vector<model::PlayerRecordItem> GetRetiredPlayers(int start, int max_items){
-	ConnectionPoolSingleton* inst = ConnectionPoolSingleton::getInstance();
+	connection_pool_single::ConnectionPoolSingleton* inst = connection_pool_single::ConnectionPoolSingleton::getInstance();
 	auto* conn_pool = inst->GetPool();
 	auto conn = conn_pool->GetConnection();
 	postgres::RetiredRepositoryImpl rep{*conn};
@@ -115,4 +115,4 @@ std::string GetRequestStringWithoutParameters(const std::string& request){
 	return np_request;
 }
 
-}
+}//namespace app_utility
