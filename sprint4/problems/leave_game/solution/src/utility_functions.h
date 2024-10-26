@@ -94,7 +94,7 @@ void SaveRetiredPlayer(const std::string& player_name, int score, int play_time)
 }
 
 std::vector<model::PlayerRecordItem> GetRetiredPlayers(int start, int max_items){
-	ConnectionPoolSingleton* inst = ConnectionPoolSingleton::getInstance();
+	connection_pool_single::ConnectionPoolSingleton* inst = connection_pool_single::ConnectionPoolSingleton::getInstance();
 	auto* conn_pool = inst->GetPool();
 	auto conn = conn_pool->GetConnection();
 	postgres::RetiredRepositoryImpl rep{*conn};
