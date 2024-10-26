@@ -86,7 +86,7 @@ void SaveRetiredPlayer(const std::string& player_name, int score, int play_time)
 
 	model::PlayerRecordItem record{PlayerId::New().ToString(), player_name, score, play_time};
 
-	ConnectionPoolSingleton* inst = ConnectionPoolSingleton::getInstance();
+	connection_pool_single::ConnectionPoolSingleton* inst = connection_pool_single::ConnectionPoolSingleton::getInstance();
 	auto* conn_pool = inst->GetPool();
 	auto conn = conn_pool->GetConnection();
 	postgres::RetiredRepositoryImpl rep{*conn};
