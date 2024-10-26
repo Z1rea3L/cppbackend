@@ -192,7 +192,7 @@ void Game::SaveSessions(int deltaTime){
 	if(!save_period_){
 		return;
 	}
-	SerializeSessions(*this, deltaTime, save_period_);
+	serialization::SerializeSessions(*this, deltaTime, save_period_);
 }
 
 void Game::RestoreSessions(const model::GameSessionsStates& sessions){
@@ -262,7 +262,7 @@ void Game::SaveExpiredPlayers(const std::vector<RetiredSessionPlayers>& expired_
 	for(auto itSesPlrs = expired_sessions_players.begin(); itSesPlrs != expired_sessions_players.end(); ++itSesPlrs){
 		for(auto itPlayer = itSesPlrs->second.begin(); itPlayer != itSesPlrs->second.end(); ++itPlayer){
 			auto dog = (*itPlayer)->GetDog();
-			SaveRetiredPlayer((*itPlayer)->GetName(), dog->GetScore(), dog->GetPlayTime());
+			app_utility::SaveRetiredPlayer((*itPlayer)->GetName(), dog->GetScore(), dog->GetPlayTime());
 		}
 	}
 }
